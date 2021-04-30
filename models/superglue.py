@@ -101,9 +101,24 @@ class MultiHeadedAttention(nn.Module):
 
     def forward(self, query, key, value):
         batch_dim = query.size(0)
+        '''
+        print('\nquery.shape :', query.shape);    #exit()
+        print('key.shape :', key.shape);    #exit()
+        print('value.shape :', value.shape);    #exit()
+        print('len(self.proj) :', len(self.proj));    #exit()
+        print('batch_dim :', batch_dim);    #exit()
+        print('self.dim :', self.dim);    #exit()
+        print('self.num_heads :', self.num_heads);    #exit()
+        #print('torch.numel(x) :', torch.numel(x));    #exit()
+        t0, t1, t2 = [l(x) for l, x in zip(self.proj, (query, key, value))]
+        print('t0.shape :', t0.shape);
+        print('t1.shape :', t1.shape);
+        print('t2.shape :', t2.shape);  #exit();
+        '''
         query, key, value = [l(x).view(batch_dim, self.dim, self.num_heads, -1)
                              for l, x in zip(self.proj, (query, key, value))]
         x, _ = attention(query, key, value)
+        #exit()
         return self.merge(x.contiguous().view(batch_dim, self.dim*self.num_heads, -1))
 
 
@@ -129,6 +144,7 @@ class AttentionalGNN(nn.Module):
 
     def forward(self, desc0, desc1):
         for layer, name in zip(self.layers, self.names):
+            #print('\n\nname :', name)
             if name == 'cross':
                 src0, src1 = desc1, desc0
             else:  # if name == 'self':
@@ -229,7 +245,11 @@ class SuperGlue(nn.Module):
         """Run SuperGlue on a pair of keypoints and descriptors"""
         desc0, desc1 = data['descriptors0'], data['descriptors1']
         kpts0, kpts1 = data['keypoints0'], data['keypoints1']
-
+        
+        '''
+        print('type(desc0) :', type(desc0));    #//  torch.Tensor 
+        print('desc0.shape :', desc0.shape);    print('desc1.shape :', desc1.shape);    exit() 
+        '''
         if kpts0.shape[1] == 0 or kpts1.shape[1] == 0:  # no keypoints
             shape0, shape1 = kpts0.shape[:-1], kpts1.shape[:-1]
             return {
@@ -246,16 +266,39 @@ class SuperGlue(nn.Module):
         # Keypoint MLP encoder.
         desc0 = desc0 + self.kenc(kpts0, data['scores0'])
         desc1 = desc1 + self.kenc(kpts1, data['scores1'])
+        '''
+        print('desc0.shape b4:', desc0.shape);
+        print('desc1.shape b4:', desc1.shape);  #exit()
+        '''
+        n_batch_0 = desc0.shape[0];    n_batch_1 = desc1.shape[0]
+        if n_batch_0 != n_batch_1:
+            if 1 == n_batch_0:
+                desc0 = desc0.repeat(n_batch_1, 1, 1)
+            elif 1 == n_batch_1:
+                #print('mdesc1.shape 1 :', mdesc1.shape);   #exit()
+                #mdesc1 = mdesc1.squeeze(0)
+                #print('mdesc1.shape 2 :', mdesc1.shape);   #exit()
+                desc1 = desc1.repeat(n_batch_0, 1, 1)
+                #print('mdesc1.shape 3 :', mdesc1.shape);   #exit()
+        #exit()
+
 
         # Multi-layer Transformer network.
         desc0, desc1 = self.gnn(desc0, desc1)
-
+        '''
+        print('desc0.shape after:', desc0.shape);
+        print('desc1.shape after:', desc1.shape);   #exit()
+        '''
         # Final MLP projection.
         mdesc0, mdesc1 = self.final_proj(desc0), self.final_proj(desc1)
 
+
+
         # Compute matching descriptor distance.
         scores = torch.einsum('bdn,bdm->bnm', mdesc0, mdesc1)
+        #print('scores.shape b4 :', scores.shape);   #exit()
         scores = scores / self.config['descriptor_dim']**.5
+        #print('scores.shape after :', scores.shape);   exit()
 
         # Run the optimal transport.
         scores = log_optimal_transport(
@@ -274,7 +317,13 @@ class SuperGlue(nn.Module):
         valid1 = mutual1 & valid0.gather(1, indices1)
         indices0 = torch.where(valid0, indices0, indices0.new_tensor(-1))
         indices1 = torch.where(valid1, indices1, indices1.new_tensor(-1))
-
+        '''  
+        print('indices0.shape :', indices0.shape);
+        print('indices1.shape :', indices1.shape);
+        print('mscores0.shape :', mscores0.shape);
+        print('mscores1.shape :', mscores1.shape);
+        exit()
+        '''
         return {
             'matches0': indices0, # use -1 for invalid match
             'matches1': indices1, # use -1 for invalid match

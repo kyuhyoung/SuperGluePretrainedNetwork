@@ -172,11 +172,15 @@ class SuperPoint(nn.Module):
             for s in scores]
         scores = [s[tuple(k.t())] for s, k in zip(scores, keypoints)]
 
+        #print('type(keypoints) b4:', type(keypoints));  #exit()
+        #print('type(scores) b4 :', type(scores));  #exit()
         # Discard keypoints near the image borders
         keypoints, scores = list(zip(*[
             remove_borders(k, s, self.config['remove_borders'], h*8, w*8)
             for k, s in zip(keypoints, scores)]))
 
+        #print('type(keypoints) after :', type(keypoints));  #exit()
+        #print('type(scores) after :', type(scores));  #exit()
         # Keep the k keypoints with highest score
         if self.config['max_keypoints'] >= 0:
             keypoints, scores = list(zip(*[
@@ -194,7 +198,11 @@ class SuperPoint(nn.Module):
         # Extract descriptors
         descriptors = [sample_descriptors(k[None], d[None], 8)[0]
                        for k, d in zip(keypoints, descriptors)]
-
+        
+        scores = list(scores)
+        #print('type(keypoints) after 2:', type(keypoints));  #exit()
+        #print('type(scores) after 2:', type(scores));  #exit()
+        #print('type(descriptors) after 2:', type(descriptors));  #exit()
         return {
             'keypoints': keypoints,
             'scores': scores,

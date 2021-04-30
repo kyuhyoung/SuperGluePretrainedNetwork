@@ -73,9 +73,15 @@ class Matching(torch.nn.Module):
         # We should either have i) one image per batch, or
         # ii) the same number of local features for all images in the batch.
         data = {**data, **pred}
+        #print('MMM');	exit()
 
         for k in data:
+            #print('\ntype(k) :', type(k));    
+            #print('k :', k);    
             if isinstance(data[k], (list, tuple)):
+                #print('len(data[k]) :', len(data[k]))
+                #for iD in range(len(data[k])):
+                    #print('iD :', iD, ', data[k][iD].shape :', data[k][iD].shape)
                 data[k] = torch.stack(data[k])
 
         # Perform the matching
