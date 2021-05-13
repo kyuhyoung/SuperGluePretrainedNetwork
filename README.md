@@ -1,18 +1,14 @@
 ## Comparison among SG, LoFTR and OpenCV feature point matching.
 SG seems to be best among them.
-According to the author's answer to the git issue https://github.com/magicleap/SuperGluePretrainedNetwork/issues/59?ts=2#issuecomment-774165033 about rotation invariance, the author said "The SuperPoint descriptors are invariant to rotation up to about 45°".  
-As I apply SG to my tasks, it seems that it not 45° but 25° at most."
+According to the author's answer to the git issue https://github.com/magicleap/SuperGluePretrainedNetwork/issues/59?ts=2#issuecomment-774165033 about rotation invariance, the author said "The SuperPoint descriptors are invariant to rotation up to about 45°". As I apply SG to my tasks, it seems that it not 45° but 25° at most."
+
 The author said "a quick fix is to rotate the image by multiples of 90°, extract features for the 4 resulting images, match each of them against your other images, and keep the set of matches with the largest number of RANSAC inliers".  
 So I did that to SG as well as LoFTR.  This 4-source-iamge-against-1-target-image mehtod is much more rotation invariant than the original version of SG and LoFTR.  
 I was afraid of lower FPS due to increasing batch size from 1 to 4.  However, FPS seems to be almost the same for both SG and LoFTR.
 
-See the shell sript file 
+See the shell sript file "sg_loftr_opencv_template_2_seq_demo.sh" for usage.
 
-
-
-
-
-
+---
 
 <img src="assets/magicleap.png" width="240">
 
