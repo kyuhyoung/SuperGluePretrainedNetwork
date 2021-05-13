@@ -295,7 +295,10 @@ class VideoStreamer:
             #image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         else:
             image_file = str(self.listing[self.i])
+            #print('image_file :', image_file);    #exit()
+            #print('is_color :', is_color);    exit()
             image, xy_offset, wh_new = self.load_image(image_file, shall_letterbox, is_color)
+            #print('image[0, 0] :', image[0, 0]);  print('image[-1, -1] :', image[-1, -1]);    exit()
         self.i = self.i + 1
         return True, image, xy_offset, wh_new
 
@@ -348,6 +351,7 @@ def process_resize(w, h, resize):
 
 
 def get_rotated_position_when_image_is_rotated_around_center(rot_deg, hw, li_xy):
+    n_dim = li_xy.ndim
     rad = np.deg2rad(rot_deg)
    
     #xy_center_old = (hw[1] * 0.5, hw[0] * 0.5)
@@ -363,7 +367,10 @@ def get_rotated_position_when_image_is_rotated_around_center(rot_deg, hw, li_xy)
     xy_center_new = ((x_max - x_min) * 0.5, -(y_max - y_min) * 0.5)
     #print('xy_center_new :', xy_center_new);    #exit()
     p_rotated = rotate_1st_around_2nd_by_3rd_radian_and_shift_by_4th(li_xy, xy_center_old, rad, xy_center_new)
-    p_rotated[:, 1] *= -1
+    if 1 == n_dim: 
+        p_rotated[1] *= -1
+    else:     
+        p_rotated[:, 1] *= -1
     #print('p_rotated :');   print(p_rotated);    exit()
     #exit()
     return p_rotated
@@ -384,6 +391,21 @@ def rotate_1st_around_2nd_by_3rd_radian_and_shift_by_4th(p, origin=(0, 0), radia
     #print('t0 :', t0);  #exit()
     return np.squeeze((R @ (p.T - o.T) + s.T).T)
 
+
+def unrotate_keypoints_2(kpts, hw, n_rots, deg_per_rot):
+    #print('hw :', hw);  exit()
+    for iP, n_rot in enumerate(n_rots):
+        if 0 == n_rot:
+            continue
+        rot_deg = deg_per_rot * n_rot
+        kpt = kpts[iP]
+        #print('kpt b4 :', kpt);
+        kpt[1] *= -1
+        #print('kpt after :', kpt);  #exit()
+        kpt_rotated = get_rotated_position_when_image_is_rotated_around_center(rot_deg, hw, kpt)
+        #print('kpt_rotated :', kpt_rotated);  exit()
+        kpts[iP] = kpt_rotated
+    return kpts       
 
 def unrotate_keypoints(kp_data, hw, n_rot, device, key = 'keypoints'):
     #xy_center = (im_bgr_or_gray_init.shape[1] * 0.5, -im_bgr_or_gray_init.shape[0] * 0.5)
@@ -443,6 +465,29 @@ def aggregate_kp_data(kp_data):
     #exit()
     return kp_data        
         
+def sort_according_2_confidence_and_trim(data, key_conf, li_key, len_trim):
+    '''
+    t0 = len(data[key_conf])
+    if 4 != t0:
+        for key in data:
+            print('\nkey :', key);  
+            if torch.is_tensor(data[key]):
+                print('data[key].shape :', data[key].shape)
+            else:
+                print('data[key] :', data[key])
+                
+        exit()
+    '''     
+    _, t_idx_sorted = torch.sort(data[key_conf], descending = True)
+    #print('t_idx_sorted :', t_idx_sorted);
+    for key in li_key:
+        #print('key "{}" will be sorted'.format(key))
+        #print('data[key] b4 :', data[key])
+        data[key] = reindex_and_trim_tensor(data[key], 0, t_idx_sorted, len_trim)
+        #print('data[key] after :', data[key])
+        #exit()
+    #exit()     
+    return data      
 
 def sort_and_trim_kp_data(kp_data):
     #print('type(kp_data[keypoints]) :', type(kp_data['keypoints']));    exit()
@@ -455,12 +500,7 @@ def sort_and_trim_kp_data(kp_data):
         if len_cur < len_min:
             len_min = len_cur
     for iI in range(batch_size):
-        
-        #print('\niI :', iI)
-        #print('(kp_data[scores][iI] b4 :', kp_data['scores'][iI]);
         _, t_idx_sorted = torch.sort(kp_data['scores'][iI], descending = True)
-        #print('(kp_data[scores][iI] after :', t0);	exit()
-        #_, t_idx_sorted = torch.sort(kp_data['scores'][iI], descending = False)
         for key in kp_data:
             '''
             print('\nkey :', key);    #exit()
@@ -490,6 +530,7 @@ def reindex_and_trim_tensor(t_ori, dim, t_idx, len_new):
     if 0 != dim:
         tsr = torch.transpose(t_ori, 0, dim)
     '''
+    #print('t_ori.shape :', t_ori.shape);    exit()
     t_trans = torch.transpose(t_ori, 0, dim)
     t_sorted = t_trans[t_idx]
     t_trim = t_sorted.narrow(0, 0, len_new) 

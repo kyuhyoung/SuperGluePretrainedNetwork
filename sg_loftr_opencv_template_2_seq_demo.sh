@@ -1,0 +1,1 @@
+python demo_superglue.py --target ./data/targets/bracket.bmp --letterboxing --show_homography --show_keypoints --no_display --input ./data/superglue_test_seq_210316 --image_glob '*.bmp' --output_dir ./output_seq --neg_opencv_0_sg_pos_loftr 1 --neg_src_0_none_pos_des -1 --resize 640 480 --weight ./data/weights/indoor_ds.ckpt 
