@@ -3,10 +3,103 @@ SG seems to be best among them.
 According to the author's answer to the git issue https://github.com/magicleap/SuperGluePretrainedNetwork/issues/59?ts=2#issuecomment-774165033 about rotation invariance, the author said "The SuperPoint descriptors are invariant to rotation up to about 45°". As I apply SG to my tasks, it seems that it not 45° but 25° at most."
 
 The author said "a quick fix is to rotate the image by multiples of 90°, extract features for the 4 resulting images, match each of them against your other images, and keep the set of matches with the largest number of RANSAC inliers".  
-So I did that to SG as well as LoFTR.  This 4-source-iamge-against-1-target-image mehtod is much more rotation invariant than the original version of SG and LoFTR.  
-I was afraid of lower FPS due to increasing batch size from 1 to 4.  However, FPS seems to be almost the same for both SG and LoFTR.
+So I did that to SG as well as LoFTR.  This 4-rotated-source-images-against-1-target-image mehtod is much more rotation invariant than the original version of SG and LoFTR.  
+I was afraid of lower FPS due to increasing batch size from 1 to 4.  However, FPS seems to be almost the same for both SG and LoFTR, that is, the FPS of the original and 4-rot-SG was around 9 ~ 10 and the FPS of original LoFTR and 4-rot-LoFTR was around 7 ~ 8 at NVIDIA RTX 6000.
 
 See the shell sript file "sg_loftr_opencv_template_2_seq_demo.sh" for usage.
+<br> </br> 
+For my experiment, I just used the pre-trained weights from the authors' repositories, and 4-rot-SG seems to be the best.  8-rot-SG will be better, which I did not try.
+<br> </br> 
+<figure>
+  <img
+  src="https://user-images.githubusercontent.com/12492992/128474770-724c6053-e647-420c-9749-89e68102a935.png"
+  alt="1st row : original SG. 2nd : original LoFTR. 3rd : 4-rotated-source-images-against-1-target-image SG. 4th : 4-rotated-source-images-against-1-target-image SG. Here original SG and 4-rot-SG seems to be good.">
+  <figcaption>1st row : original SG <br> 2nd row : original LoFTR <br> 3rd row : 4-rotated-source-images-against-1-target-image SG <br> 4th row : 4-rotated-source-images-against-1-target-image LoFTR. <br> Here, original SG and 4-rot-SG seems to be good.</figcaption>
+</figure>  
+<br> </br> <br> </br> 
+
+<figure>
+  <img
+  src="https://user-images.githubusercontent.com/12492992/128475051-f9807665-cd54-4bcf-9816-508084b53e41.png"
+  alt="Here, 4-rot-SG seems to be the best.">
+  <figcaption> Here, 4-rot-SG seems to be the best.</figcaption>
+</figure>  
+<br> </br> <br> </br>
+
+<figure>
+  <img
+  src="https://user-images.githubusercontent.com/12492992/128475294-84d92622-617c-4855-8ee0-f4a7966fe961.png"
+  alt="Here, 4-rot-SG and 4-rot-LoFTR seems to be the best.">
+  <figcaption> Here, 4-rot-SG and 4-rot-LoFTR seems to be the best.</figcaption>
+</figure>  
+<br> </br> <br> </br>
+
+<figure>
+  <img
+  src="https://user-images.githubusercontent.com/12492992/128475378-14df2878-86b9-430c-9eae-47cbb0532d11.png"
+  alt="Here, 4-rot-SG seems to be the best.">
+  <figcaption> Here, 4-rot-SG seems to be the best.</figcaption>
+</figure>  
+<br> </br> <br> </br>
+
+
+<figure>
+  <img
+  src="https://user-images.githubusercontent.com/12492992/128475683-f5833164-5890-40c0-937f-4763b2878365.png"
+  alt="Here original SG and 4-rot-SG seems to be good.">
+  <figcaption> Here original SG and 4-rot-SG seems to be good.</figcaption>
+</figure>  
+<br> </br> <br> </br>
+
+
+<figure>
+  <img
+  src="https://user-images.githubusercontent.com/12492992/128475786-a2989201-7f18-4d0a-912c-1c87c0d91255.png"
+  alt="Here original SG seems to be good.">
+  <figcaption> Here original SG seems to be good.</figcaption>
+</figure>  
+<br> </br> <br> </br>
+
+
+![image](https://user-images.githubusercontent.com/12492992/128475869-d46e011b-956c-48fc-8ed8-e4728f8254f0.png)
+<br> </br> <br> </br>
+
+
+![image](https://user-images.githubusercontent.com/12492992/128475939-f9f7ea3c-6c04-48ce-9f2a-406f4951655f.png)
+<br> </br> <br> </br>
+
+
+![image](https://user-images.githubusercontent.com/12492992/128476111-f3e31096-092d-4b7e-a9c6-45fb3f287075.png)
+<br> </br> <br> </br>
+
+
+![image](https://user-images.githubusercontent.com/12492992/128476168-6fdd4674-b4d1-43ad-9f32-d4d71802f2a8.png)
+<br> </br> <br> </br>
+
+
+![image](https://user-images.githubusercontent.com/12492992/128476236-15be8cb2-af41-473e-8993-85eac28af22a.png)
+<br> </br> <br> </br>
+
+
+![image](https://user-images.githubusercontent.com/12492992/128476306-aeeeeb11-8221-4a0a-8460-ffa1c8bfb543.png)
+<br> </br> <br> </br>
+
+
+![image](https://user-images.githubusercontent.com/12492992/128476782-37ef0b48-3769-4746-8ef5-bf669a9abcac.png)
+<br> </br> <br> </br>
+
+
+![image](https://user-images.githubusercontent.com/12492992/128477111-0c00d7e7-91d8-4c68-bc7c-2cd06736d6f2.png)
+<br> </br> <br> </br>
+
+![image](https://user-images.githubusercontent.com/12492992/128477264-8bc731ca-023e-4bc6-948d-c79f6e977ebf.png)
+<br> </br> <br> </br>
+
+![image](https://user-images.githubusercontent.com/12492992/128477341-9564221e-072d-4597-8667-8d08928cb150.png)
+<br> </br> <br> </br>
+
+
+
 
 ---
 
