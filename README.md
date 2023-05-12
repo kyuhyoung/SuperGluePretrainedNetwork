@@ -6,7 +6,7 @@ The author said "a quick fix is to rotate the image by multiples of 90°, extrac
 So I did that to SG as well as LoFTR.  This 4-rotated-source-images-against-1-target-image mehtod is much more rotation invariant than the original version of SG and LoFTR.  
 I was afraid of lower FPS due to increasing batch size from 1 to 4.  However, FPS seems to be almost the same for both SG and LoFTR, that is, the FPS of the original and 4-rot-SG was around 9 ~ 10 and the FPS of original LoFTR and 4-rot-LoFTR was around 7 ~ 8 at NVIDIA RTX 6000.
 
-See the shell sript file "sg_loftr_opencv_template_2_seq_demo.sh" for usage.
+See the shell script file "sg_loftr_opencv_template_2_seq_demo.sh" for usage.
 <br> </br> 
 For my experiment, I just used the pre-trained weights from the authors' repositories, and 4-rot-SG seems to be the best.  8-rot-SG will be better, which I did not try.
 <br> </br> 
