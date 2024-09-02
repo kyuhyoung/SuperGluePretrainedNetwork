@@ -14,7 +14,7 @@ For my experiment, I just used the pre-trained weights from the authors' reposit
   <img
   src="https://user-images.githubusercontent.com/12492992/128474770-724c6053-e647-420c-9749-89e68102a935.png"
   alt="1st row : original SG. 2nd : original LoFTR. 3rd : 4-rotated-source-images-against-1-target-image SG. 4th : 4-rotated-source-images-against-1-target-image SG. Here original SG and 4-rot-SG seems to be good.">
-  <figcaption>1st row : original SG <br> 2nd row : original LoFTR <br> 3rd row : 4-rotated-source-images-against-1-target-image SG <br> 4th row : 4-rotated-source-images-against-1-target-image LoFTR. <br> Here, original SG and 4-rot-SG seems to be good.</figcaption>
+  <figcaption>1st row : original SG <br> 2nd row : original LoFTR <br> 3rd row : 4-rotated-source-images-against-1-target-image SG <br> 4th row : 4-rotated-source-images-against-1-target-image LoFTR. <br> Here, original SG and 4-rot-SG seem to be good.</figcaption>
 </figure>  
 <br> </br> <br> </br> 
 
@@ -30,7 +30,7 @@ For my experiment, I just used the pre-trained weights from the authors' reposit
   <img
   src="https://user-images.githubusercontent.com/12492992/128475294-84d92622-617c-4855-8ee0-f4a7966fe961.png"
   alt="Here, 4-rot-SG and 4-rot-LoFTR seems to be the best.">
-  <figcaption> Here, 4-rot-SG and 4-rot-LoFTR seems to be the best.</figcaption>
+  <figcaption> Here, 4-rot-SG and 4-rot-LoFTR seem to be the best.</figcaption>
 </figure>  
 <br> </br> <br> </br>
 
@@ -47,7 +47,7 @@ For my experiment, I just used the pre-trained weights from the authors' reposit
   <img
   src="https://user-images.githubusercontent.com/12492992/128475683-f5833164-5890-40c0-937f-4763b2878365.png"
   alt="Here original SG and 4-rot-SG seems to be good.">
-  <figcaption> Here original SG and 4-rot-SG seems to be good.</figcaption>
+  <figcaption> Here original SG and 4-rot-SG seem to be good.</figcaption>
 </figure>  
 <br> </br> <br> </br>
 
